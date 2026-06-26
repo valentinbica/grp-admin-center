@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grip Mothership — Integration Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15171C; --ink-2:#1C1F26; --ink-3:#262A33;
+  --canvas:#F3F4F6; --surface:#FFFFFF;
+  --line:#E4E7EB; --line-strong:#CFD4DB;
+  --text:#181B20; --text-2:#5C636E; --text-3:#8B919C;
+  --brass:#B0822C; --brass-d:#8E6720; --brass-soft:#F4ECDB;
+  --ok:#1E9D57; --ok-bg:#E5F4EC;
+  --warn:#C5810C; --warn-bg:#FAF0D9;
+  --err:#CD3C33; --err-bg:#FAE5E3;
+  --info:#2C6EB6; --info-bg:#E7F0FA;
+  --shadow:0 1px 2px rgba(20,24,33,.04),0 2px 8px rgba(20,24,33,.05);
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--canvas); color:var(--text);
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  display:flex; min-height:100vh;
+}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.sidebar{width:248px; flex-shrink:0; background:var(--ink); color:#C9CDD4; display:flex; flex-direction:column; position:sticky; top:0; height:100vh}
+.brand{display:flex; align-items:center; gap:11px; padding:20px 20px 18px; border-bottom:1px solid #2A2E37}
+.brand-mark{width:34px;height:34px;border-radius:8px;flex-shrink:0;background:linear-gradient(150deg,var(--brass),var(--brass-d));display:grid;place-items:center;color:#1a1206;font-weight:700;font-family:'IBM Plex Mono';font-size:15px;letter-spacing:-1px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.brand-name{font-weight:600;color:#fff;font-size:14.5px;letter-spacing:-.1px;line-height:1.15}
+.brand-sub{font-size:11px;color:#737A86;font-family:'IBM Plex Mono';margin-top:1px}
+.nav{padding:14px 12px;flex:1;overflow-y:auto}
+.nav-label{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:#666D79;padding:8px 12px 6px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:9px 12px;border-radius:8px;color:#B4B9C2;background:none;border:none;font-family:inherit;font-size:13.5px;cursor:pointer;margin-bottom:2px;border-left:2px solid transparent; transition:background .12s,color .12s}
+.nav-item:hover{background:#23272F;color:#E6E8EC}
+.nav-item.active{background:#23272F;color:#fff;border-left-color:var(--brass)}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;stroke-width:1.7}
+.nav-item .badge{margin-left:auto;font-size:11px;font-family:'IBM Plex Mono';background:var(--err);color:#fff;border-radius:20px;padding:1px 7px;font-weight:600}
+.sb-foot{padding:14px 18px;border-top:1px solid #2A2E37;font-size:12px}
+.sb-health{display:flex;align-items:center;gap:8px;color:#9AA1AB}
+.sb-foot .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(30,157,87,.5);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(30,157,87,.45)}70%{box-shadow:0 0 0 7px rgba(30,157,87,0)}100%{box-shadow:0 0 0 0 rgba(30,157,87,0)}}
+.sb-foot .who{margin-top:11px;display:flex;align-items:center;gap:9px;color:#7E8590}
+.avatar{width:26px;height:26px;border-radius:50%;background:#343A44;display:grid;place-items:center;color:#C9CDD4;font-size:11px;font-weight:600}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:60px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:20}
+.page-title{font-size:16px;font-weight:600;letter-spacing:-.2px}
+.page-sub{font-size:12.5px;color:var(--text-2);margin-top:1px}
+.topbar .spacer{flex:1}
+.env{font-family:'IBM Plex Mono';font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--brass-d);background:var(--brass-soft);border:1px solid #E7D8B5;padding:4px 9px;border-radius:6px}
+.global-dot{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-2)}
+.global-dot i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.content{padding:26px 28px 60px;max-width:1180px;width:100%}
+.page{display:none;animation:fade .2s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+h2.sec{font-size:13px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.08em;margin:30px 0 12px}
+.btn{font-family:inherit;font-size:13px;font-weight:500;border-radius:7px;padding:8px 14px;cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--text);display:inline-flex;align-items:center;gap:7px;transition:.12s}
+.btn:hover{border-color:var(--text-3);background:#FAFBFC}
+.btn svg{width:15px;height:15px;stroke-width:1.8}
+.btn.primary{background:var(--brass);border-color:var(--brass-d);color:#fff}
+.btn.primary:hover{background:var(--brass-d)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--text-2);padding:6px 9px}
+.btn.ghost:hover{background:#EDEFF2;color:var(--text)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn:focus-visible,.nav-item:focus-visible,.pill-btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono';padding:2px 9px;border-radius:20px;letter-spacing:.01em;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.pill.ok{color:var(--ok);background:var(--ok-bg)}
+.pill.warn{color:var(--warn);background:var(--warn-bg)}
+.pill.err{color:var(--err);background:var(--err-bg)}
+.pill.info{color:var(--info);background:var(--info-bg)}
+.pill.idle{color:var(--text-2);background:#EDEFF2}
+.pill.no-dot::before{display:none}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.conn{padding:18px}
+.conn-head{display:flex;align-items:flex-start;gap:13px;margin-bottom:16px}
+.conn-logo{width:42px;height:42px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font-weight:700;font-family:'IBM Plex Mono';font-size:15px;color:#fff}
+.lg-shop{background:#5E8E3E}.lg-bc{background:#2D6FB8}.lg-amz{background:#E0922F}.lg-ship{background:#6A52B8}
+.conn-name{font-weight:600;font-size:14.5px}
+.conn-type{font-size:12px;color:var(--text-2);margin-top:2px}
+.conn-meta{border-top:1px solid var(--line);padding-top:13px;display:flex;flex-direction:column;gap:8px}
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+.kv .k{color:var(--text-3)}
+.kv .v{font-family:'IBM Plex Mono';font-size:12px;color:var(--text)}
+.conn-actions{display:flex;gap:8px;margin-top:15px}
+
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.filters{display:flex;gap:6px}
+.pill-btn{font-family:'IBM Plex Mono';font-size:12px;border:1px solid var(--line-strong);background:var(--surface);color:var(--text-2);padding:5px 11px;border-radius:20px;cursor:pointer;transition:.12s}
+.pill-btn:hover{border-color:var(--text-3)}
+.pill-btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.search{flex:1;min-width:160px;max-width:300px;position:relative}
+.search input{width:100%;font-family:'IBM Plex Mono';font-size:12.5px;padding:8px 11px 8px 32px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--text)}
+.search svg{position:absolute;left:10px;top:9px;width:15px;height:15px;color:var(--text-3);stroke-width:1.8}
+.search input:focus{outline:2px solid var(--brass);outline-offset:0;border-color:transparent}
+
+.tablewrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);font-weight:600;text-align:left;padding:11px 16px;background:#FAFBFC;border-bottom:1px solid var(--line)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .1s}
+tbody tr:hover{background:#FAFBFC}
+.evt-type{font-family:'IBM Plex Mono';font-size:12.5px;font-weight:500}
+.t-time{font-family:'IBM Plex Mono';font-size:12px;color:var(--text-2);white-space:nowrap}
+.t-dur{font-family:'IBM Plex Mono';font-size:12px;color:var(--text-3)}
+.t-src{font-size:12.5px;color:var(--text-2)}
+.t-id{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-3)}
+.arrow{color:var(--text-3);margin:0 5px}
+
+.strip{display:flex;gap:18px;margin-bottom:16px}
+.stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}
+.stat .n{font-family:'IBM Plex Mono';font-size:24px;font-weight:600;letter-spacing:-.5px}
+.stat .l{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.stat .n.ok{color:var(--ok)}.stat .n.err{color:var(--err)}.stat .n.warn{color:var(--warn)}.stat .n.info{color:var(--info)}
+.spark{display:flex;align-items:flex-end;gap:2px;height:26px;margin-top:9px}
+.spark span{flex:1;background:var(--brass-soft);border-radius:1px;min-height:3px}
+.spark span.hi{background:var(--brass)}
+
+.keytable td .keyval{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--text);letter-spacing:.02em}
+.scope-tag{font-family:'IBM Plex Mono';font-size:10.5px;background:#EDEFF2;color:var(--text-2);padding:2px 7px;border-radius:5px;margin-right:4px;display:inline-block;margin-bottom:2px}
+
+.where{font-family:'IBM Plex Mono';font-size:11px;padding:2px 8px;border-radius:5px}
+.where.push{background:var(--info-bg);color:var(--info)}
+.where.native{background:#EDEAF6;color:#6A52B8}
+
+.alert{display:flex;gap:15px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:12px;align-items:flex-start;border-left:3px solid var(--line-strong)}
+.alert.sev-block{border-left-color:var(--err)}
+.alert.sev-review{border-left-color:var(--warn)}
+.alert.sev-notify{border-left-color:var(--info)}
+.alert.resolved{opacity:.55}
+.alert-ic{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:grid;place-items:center}
+.alert.sev-block .alert-ic{background:var(--err-bg);color:var(--err)}
+.alert.sev-review .alert-ic{background:var(--warn-bg);color:var(--warn)}
+.alert.sev-notify .alert-ic{background:var(--info-bg);color:var(--info)}
+.alert-ic svg{width:18px;height:18px;stroke-width:1.9}
+.alert-body{flex:1;min-width:0}
+.alert-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:3px}
+.alert-title{font-weight:600;font-size:14px}
+.alert-msg{font-size:13px;color:var(--text-2);line-height:1.5}
+.alert-msg b{color:var(--text);font-weight:600}
+.alert-meta{display:flex;gap:14px;margin-top:9px;font-size:11.5px;color:var(--text-3);font-family:'IBM Plex Mono';flex-wrap:wrap}
+.alert-meta b{color:var(--text-2);font-weight:500}
+.alert-act{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.sev-tag{font-family:'IBM Plex Mono';font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:5px}
+.sev-tag.block{background:var(--err-bg);color:var(--err)}
+.sev-tag.review{background:var(--warn-bg);color:var(--warn)}
+.sev-tag.notify{background:var(--info-bg);color:var(--info)}
+
+.intro{font-size:13px;color:var(--text-2);margin-bottom:4px;max-width:700px;line-height:1.55}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:.25s;z-index:100;display:flex;align-items:center;gap:9px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+
+/* overlay + drawer + modal */
+.overlay{position:fixed;inset:0;background:rgba(20,24,33,.45);opacity:0;pointer-events:none;transition:.2s;z-index:60}
+.overlay.show{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:540px;max-width:94vw;background:var(--canvas);box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .25s ease;z-index:70;display:flex;flex-direction:column}
+.drawer.show{transform:none}
+.drawer-head{padding:20px 24px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px}
+.drawer-head .x{margin-left:auto;cursor:pointer;color:var(--text-3);background:none;border:none;font-size:24px;line-height:.8;padding:0 4px}
+.drawer-head .x:hover{color:var(--text)}
+.drawer-title{font-size:16px;font-weight:600}
+.drawer-sub{font-size:12.5px;color:var(--text-2);margin-top:2px}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 24px 20px}
+.drawer-foot{padding:16px 24px;background:var(--surface);border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+.dr-hint{font-size:12px;color:var(--text-3);margin:14px 0 4px;line-height:1.5}
+.dr-grouplabel{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);font-weight:600;margin:18px 0 4px}
+
+.sync-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.sync-row:last-child{border-bottom:none}
+.sync-info{flex:1;min-width:0}
+.sync-name{font-size:13.5px;font-weight:600}
+.sync-dir{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-3);margin-top:3px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:7px;overflow:hidden;flex-shrink:0}
+.seg button{font-family:'IBM Plex Mono';font-size:11px;border:none;background:var(--surface);color:var(--text-2);padding:6px 9px;cursor:pointer;transition:.1s}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button:disabled{cursor:not-allowed;color:var(--text-3);background:#F4F5F7}
+.switch{position:relative;width:38px;height:22px;flex-shrink:0;display:inline-block}
+.switch input{position:absolute;opacity:0;width:38px;height:22px;margin:0;cursor:pointer;z-index:2}
+.switch .track{position:absolute;inset:0;background:var(--line-strong);border-radius:20px;transition:.18s}
+.switch .track::before{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked + .track{background:var(--ok)}
+.switch input:checked + .track::before{transform:translateX(16px)}
+.switch input:focus-visible + .track{outline:2px solid var(--brass);outline-offset:2px}
+.sync-row.off .sync-info,.sync-row.off .seg{opacity:.45}
+
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%) scale(.98);width:540px;max-width:94vw;background:var(--surface);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.28);z-index:70;opacity:0;pointer-events:none;transition:.2s}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal-head{padding:20px 24px 0}
+.modal-title{font-size:16px;font-weight:600}
+.modal-sub{font-size:12.5px;color:var(--text-2);margin-top:2px}
+.modal-body{padding:18px 24px;display:flex;flex-direction:column;gap:15px}
+.modal-foot{padding:0 24px 22px;display:flex;gap:10px;justify-content:flex-end}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px}
+.field input[type=text],.field select{width:100%;font-family:inherit;font-size:13.5px;padding:9px 11px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--text)}
+.field input:focus,.field select:focus{outline:2px solid var(--brass);outline-offset:0;border-color:transparent}
+.chk-group{display:flex;gap:8px;flex-wrap:wrap}
+.chk{display:flex;align-items:center;gap:7px;border:1px solid var(--line-strong);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:13px;user-select:none}
+.chk:hover{border-color:var(--text-3)}
+.chk input{accent-color:var(--brass);width:15px;height:15px}
+.where-hint{font-family:'IBM Plex Mono';font-size:11.5px;padding:9px 12px;border-radius:7px;background:var(--info-bg);color:var(--info);line-height:1.5}
+.where-hint.native{background:#EDEAF6;color:#6A52B8}
+
+@media(max-width:860px){
+  .sidebar{width:64px}.brand-name,.brand-sub,.nav-label,.nav-item span:not(.badge),.sb-foot .who span,.sb-health span{display:none}
+  .nav-item{justify-content:center;padding:11px 0}.brand{justify-content:center;padding:18px 0}
+  .content{padding:18px 14px}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">GM</div>
+    <div><div class="brand-name">Grip Mothership</div><div class="brand-sub">integration console</div></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Operations</div>
+    <button class="nav-item active" data-page="connectors">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 7h18M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"/></svg>
+      <span>Connectors</span>
+    </button>
+    <button class="nav-item" data-page="events">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <span>Event log</span>
+    </button>
+    <button class="nav-item" data-page="alerts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 9v4M12 17h.01M10.3 4.3 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/></svg>
+      <span>Alerts</span><span class="badge">3</span>
+    </button>
+    <div class="nav-label">Configuration</div>
+    <button class="nav-item" data-page="pricing">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>Pricing rules</span>
+    </button>
+    <button class="nav-item" data-page="keys">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 7a4 4 0 1 0-3.9 5H14l2 2 2-2 2 2 2-2-2-2"/></svg>
+      <span>API keys</span>
+    </button>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-health"><span class="pulse"></span><span>All services operational</span></div>
+    <div class="who"><span class="avatar">TK</span><span>Thomas Kukucka</span></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div><div class="page-title" id="pgTitle">Connectors</div><div class="page-sub" id="pgSub">Connected systems and sync status</div></div>
+    <div class="spacer"></div>
+    <div class="global-dot"><i></i> Queue: 6 in flight</div>
+    <span class="env">PRODUCTION</span>
+  </header>
+
+  <div class="content">
+
+    <!-- CONNECTORS -->
+    <section class="page active" id="connectors">
+      <p class="intro">Each system connects to the middleware over a single channel. Shopify stores emit events over webhooks (near-real-time); Business Central has no native events, so it's read through a short-interval change feed.</p>
+      <h2 class="sec">Shopify stores</h2>
+      <div class="cards">
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-shop">US</div><div><div class="conn-name">Shopify · USA D2C</div><div class="conn-type">Storefront · webhook</div></div><div style="margin-left:auto"><span class="pill ok">connected</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">webhook · orders, refunds</span></div>
+            <div class="kv"><span class="k">Last event</span><span class="v">12s ago</span></div>
+            <div class="kv"><span class="k">Webhook signature</span><span class="v">verified</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm" onclick="toast('Connection tested — OK')">Test</button><button class="btn sm ghost" onclick="openShop('usa-d2c')">Configure sync</button></div>
+        </div>
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-shop">B2</div><div><div class="conn-name">Shopify · USA B2B</div><div class="conn-type">B2B catalog · webhook</div></div><div style="margin-left:auto"><span class="pill ok">connected</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">webhook · orders</span></div>
+            <div class="kv"><span class="k">Last event</span><span class="v">1m 04s ago</span></div>
+            <div class="kv"><span class="k">Price lists</span><span class="v">3 active</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm" onclick="toast('Connection tested — OK')">Test</button><button class="btn sm ghost" onclick="openShop('usa-b2b')">Configure sync</button></div>
+        </div>
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-shop">AU</div><div><div class="conn-name">Shopify · AU D2C</div><div class="conn-type">Storefront · manual</div></div><div style="margin-left:auto"><span class="pill warn">manual</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">not configured</span></div>
+            <div class="kv"><span class="k">Order processing</span><span class="v">manual (off-system)</span></div>
+            <div class="kv"><span class="k">Note</span><span class="v">distributor buy-back</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm primary" onclick="toast('Connection wizard started')">Connect</button><button class="btn sm ghost" onclick="openShop('au')">Configure sync</button></div>
+        </div>
+      </div>
+
+      <h2 class="sec">ERP &amp; logistics</h2>
+      <div class="cards">
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-bc">BC</div><div><div class="conn-name">Business Central</div><div class="conn-type">ERP · API + change feed</div></div><div style="margin-left:auto"><span class="pill ok">connected</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">poll 60s + AL trigger</span></div>
+            <div class="kv"><span class="k">Last change feed</span><span class="v">22s ago</span></div>
+            <div class="kv"><span class="k">Cost / margin</span><span class="v">isolated (never leaves)</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm" onclick="toast('Connection tested — OK')">Test</button><button class="btn sm ghost">Configure</button></div>
+        </div>
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-ship">SS</div><div><div class="conn-name">ShipStation</div><div class="conn-type">Carriers · API + webhook</div></div><div style="margin-left:auto"><span class="pill ok">connected</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">webhook · tracking</span></div>
+            <div class="kv"><span class="k">Last event</span><span class="v">3m 41s ago</span></div>
+            <div class="kv"><span class="k">Labels today</span><span class="v">128</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm" onclick="toast('Connection tested — OK')">Test</button><button class="btn sm ghost">Configure</button></div>
+        </div>
+        <div class="card conn">
+          <div class="conn-head"><div class="conn-logo lg-amz">AZ</div><div><div class="conn-name">Amazon FBA</div><div class="conn-type">Marketplace · API</div></div><div style="margin-left:auto"><span class="pill warn">degraded</span></div></div>
+          <div class="conn-meta">
+            <div class="kv"><span class="k">Event channel</span><span class="v">poll 15m</span></div>
+            <div class="kv"><span class="k">Last sync</span><span class="v">14m ago</span></div>
+            <div class="kv"><span class="k">Warning</span><span class="v" style="color:var(--warn)">rate limit hit</span></div>
+          </div>
+          <div class="conn-actions"><button class="btn sm" onclick="toast('Retry scheduled')">Reconnect</button><button class="btn sm ghost">Logs</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="page" id="events">
+      <p class="intro">Every queue message leaves a trace here — source, type, status, duration, and attempt count. Messages that fail too many times move to the dead-letter queue and raise an alert.</p>
+      <div class="strip">
+        <div class="stat"><div class="n">2,847</div><div class="l">Events today</div>
+          <div class="spark"><span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span><span class="hi" style="height:80%"></span><span style="height:62%"></span><span style="height:70%"></span><span class="hi" style="height:95%"></span><span style="height:58%"></span><span style="height:66%"></span><span style="height:74%"></span></div></div>
+        <div class="stat"><div class="n ok">99.4%</div><div class="l">Success rate (24h)</div></div>
+        <div class="stat"><div class="n warn">3</div><div class="l">Retrying</div></div>
+        <div class="stat"><div class="n err">1</div><div class="l">Dead-letter</div></div>
+      </div>
+      <div class="toolbar">
+        <div class="filters">
+          <button class="pill-btn on" data-f="all">All</button>
+          <button class="pill-btn" data-f="success">Success</button>
+          <button class="pill-btn" data-f="retry">Retrying</button>
+          <button class="pill-btn" data-f="failed">Failed</button>
+        </div>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input placeholder="search SKU, order id, idempotency key…"></div>
+        <button class="btn sm ghost" onclick="toast('Export started')">Export</button>
+      </div>
+      <div class="tablewrap">
+        <table id="evtTable">
+          <thead><tr><th>Time</th><th>Event</th><th>Flow</th><th>Status</th><th>Attempts</th><th>Duration</th><th>Idempotency key</th></tr></thead>
+          <tbody>
+            <tr data-s="success"><td class="t-time">12:48:31</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.84s</td><td class="t-id">evt_9f3a…c21</td></tr>
+            <tr data-s="success"><td class="t-time">12:48:09</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.12s</td><td class="t-id">evt_77b1…9de</td></tr>
+            <tr data-s="success"><td class="t-time">12:47:55</td><td><span class="evt-type">fulfillment.posted</span></td><td class="t-src">WMS/ShipStation <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.66s</td><td class="t-id">evt_1c08…4a2</td></tr>
+            <tr data-s="retry"><td class="t-time">12:47:40</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA B2B <span class="arrow">→</span> BC</td><td><span class="pill warn">retrying</span></td><td class="mono">2/5</td><td class="t-dur">—</td><td class="t-id">evt_5e2d…b80</td></tr>
+            <tr data-s="success"><td class="t-time">12:47:12</td><td><span class="evt-type">pricing.push</span></td><td class="t-src">Console <span class="arrow">→</span> Shopify USA D2C</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.39s</td><td class="t-id">evt_a410…7f1</td></tr>
+            <tr data-s="success"><td class="t-time">12:46:58</td><td><span class="evt-type">order.cancelled</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.51s</td><td class="t-id">evt_b922…3cc</td></tr>
+            <tr data-s="failed"><td class="t-time">12:46:30</td><td><span class="evt-type">refund.sync</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill err">dead-letter</span></td><td class="mono">5/5</td><td class="t-dur">timeout</td><td class="t-id">evt_d7e4…11a</td></tr>
+            <tr data-s="success"><td class="t-time">12:46:02</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.04s</td><td class="t-id">evt_3aa9…57e</td></tr>
+            <tr data-s="success"><td class="t-time">12:45:44</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.79s</td><td class="t-id">evt_6f01…d33</td></tr>
+            <tr data-s="retry"><td class="t-time">12:45:20</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify AU</td><td><span class="pill warn">retrying</span></td><td class="mono">3/5</td><td class="t-dur">—</td><td class="t-id">evt_0b7c…e90</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ALERTS -->
+    <section class="page" id="alerts">
+      <p class="intro">Alerts come from rules over the event log and from read-back reconciliation (comparing what's live in the stores against the source of truth). Every alert has a severity and an owner.</p>
+      <div class="strip" style="margin-top:14px">
+        <div class="stat"><div class="n err">2</div><div class="l">Blocking (needs action)</div></div>
+        <div class="stat"><div class="n warn">2</div><div class="l">To review</div></div>
+        <div class="stat"><div class="n info">2</div><div class="l">Notifications</div></div>
+        <div class="stat"><div class="n">6</div><div class="l">Open total</div></div>
+      </div>
+
+      <div class="alert sev-review" id="al1">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a9 9 0 1 1-6.2-8.6"/><path d="M21 4v5h-5"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag review">drift</span><span class="alert-title">Pricing tier changed manually in Shopify</span></div>
+          <div class="alert-msg">Reconciliation found a mismatch in <b>Shopify USA D2C</b>: SKU <b>BBX14S</b> is listed at <b>$129.00</b>, but the source of truth says <b>$139.00</b>. Someone edited the price directly in Shopify admin about 20 min ago.</div>
+          <div class="alert-meta"><span>source: <b>read-back reconcile</b></span><span>detected: <b>12:29</b></span><span>owner: <b>unassigned</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm primary" onclick="toast('Resynced from source of truth')">Resync</button><button class="btn sm ghost" onclick="ack('al1')">Acknowledge</button></div>
+      </div>
+
+      <div class="alert sev-block" id="al2">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag block">block</span><span class="alert-title">Order failed to reach Business Central</span></div>
+          <div class="alert-msg"><b>refund.sync</b> for order <b>#10428</b> failed after 5 attempts and is now in the <b>dead-letter queue</b>. The credit was not posted to BC. Manual intervention required.</div>
+          <div class="alert-meta"><span>source: <b>dead-letter queue</b></span><span>detected: <b>12:46</b></span><span>owner: <b>Pete</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm primary" onclick="toast('Message requeued')">Retry</button><button class="btn sm ghost" onclick="ack('al2')">Acknowledge</button></div>
+      </div>
+
+      <div class="alert sev-block" id="al3">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 9v4M12 17h.01M10.3 4.3 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag block">block</span><span class="alert-title">Minimum-margin breach blocked</span></div>
+          <div class="alert-msg">A discount on <b>BBXBOGO</b> would have dropped the price below the minimum margin. The push was <b>stopped before publishing</b>. Review the pricing rule before re-publishing.</div>
+          <div class="alert-meta"><span>source: <b>margin guard (BC)</b></span><span>detected: <b>11:58</b></span><span>owner: <b>unassigned</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm" onclick="show('pricing')">View rule</button><button class="btn sm ghost" onclick="ack('al3')">Acknowledge</button></div>
+      </div>
+
+      <div class="alert sev-review" id="al4">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 9v4M12 17h.01M10.3 4.3 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag review">review</span><span class="alert-title">Partial inventory sync</span></div>
+          <div class="alert-msg">Inventory push succeeded on <b>2 of 3</b> stores. <b>Shopify AU</b> was skipped (manual connector). Parity risk on the AU channel.</div>
+          <div class="alert-meta"><span>source: <b>inventory.push</b></span><span>detected: <b>12:45</b></span><span>owner: <b>unassigned</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm" onclick="show('events')">View events</button><button class="btn sm ghost" onclick="ack('al4')">Acknowledge</button></div>
+      </div>
+
+      <div class="alert sev-notify" id="al5">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag notify">notify</span><span class="alert-title">BC change feed went quiet</span></div>
+          <div class="alert-msg">No events from <b>Business Central</b> for <b>18 minutes</b>. The job may have stopped — stock updates to the stores could lag.</div>
+          <div class="alert-meta"><span>source: <b>heartbeat</b></span><span>detected: <b>12:30</b></span><span>owner: <b>John</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm" onclick="toast('Change feed restarted')">Restart</button><button class="btn sm ghost" onclick="ack('al5')">Acknowledge</button></div>
+      </div>
+
+      <div class="alert sev-notify" id="al6">
+        <div class="alert-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+        <div class="alert-body">
+          <div class="alert-top"><span class="sev-tag notify">notify</span><span class="alert-title">Queue depth rising</span></div>
+          <div class="alert-msg">The queue reached <b>240 messages</b> — the consumer is falling behind. If the trend continues, sync latency will increase.</div>
+          <div class="alert-meta"><span>source: <b>queue monitor</b></span><span>detected: <b>12:41</b></span><span>owner: <b>John</b></span></div>
+        </div>
+        <div class="alert-act"><button class="btn sm ghost" onclick="ack('al6')">Acknowledge</button></div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="page" id="pricing">
+      <p class="intro">You sync <b>data</b> (prices, MAP floors, list memberships) — not discount logic. Conditional rules run natively in Shopify; here you only push their parameters. The "Where it runs" column shows the difference.</p>
+      <div class="toolbar">
+        <button class="btn primary" onclick="toast('3 rules synced to Shopify ×3')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a9 9 0 1 1-6.2-8.6"/><path d="M21 4v5h-5"/></svg>Sync all to Shopify</button>
+        <div class="spacer" style="flex:1"></div>
+        <button class="btn sm ghost" onclick="openRule()">+ Rule</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Rule</th><th>Type</th><th>Target</th><th>Value</th><th>Where it runs</th><th>Sync</th><th></th></tr></thead>
+          <tbody id="priceBody">
+            <tr><td><b>List price — BBX14S</b><div class="t-id" style="margin-top:2px">Extractor Set, 14 pc</div></td><td class="t-src">base price</td><td class="t-src">all ×3</td><td class="mono">$139.00</td><td><span class="where push">push (data)</span></td><td><span class="pill ok">synced · 12:47</span></td><td><button class="btn sm ghost" onclick="toast('Synced')">Sync</button></td></tr>
+            <tr><td><b>MAP floor — BBX1</b><div class="t-id" style="margin-top:2px">minimum advertised price</div></td><td class="t-src">MAP floor</td><td class="t-src">all ×3</td><td class="mono">$24.99</td><td><span class="where push">push (data)</span></td><td><span class="pill ok">synced · 12:47</span></td><td><button class="btn sm ghost" onclick="toast('Synced')">Sync</button></td></tr>
+            <tr><td><b>Jobber price list</b><div class="t-id" style="margin-top:2px">B2B program price</div></td><td class="t-src">price list</td><td class="t-src">USA B2B</td><td class="mono">~40% margin</td><td><span class="where push">push (data)</span></td><td><span class="pill ok">synced · 11:30</span></td><td><button class="btn sm ghost" onclick="toast('Synced')">Sync</button></td></tr>
+            <tr><td><b>Buy-To-Use tier</b><div class="t-id" style="margin-top:2px">10% → 20% by spend, per store</div></td><td class="t-src">conditional tier</td><td class="t-src">USA D2C</td><td class="mono">10% / 20%</td><td><span class="where native">Shopify Function</span></td><td><span class="pill idle no-dot">managed in Shopify</span></td><td><button class="btn sm ghost" onclick="toast('Parameters (thresholds) pushed as metafields')">Config</button></td></tr>
+            <tr><td><b>Promo parity — BOGO</b><div class="t-id" style="margin-top:2px">BBXBOGO, buy-one-get-one</div></td><td class="t-src">code / automatic</td><td class="t-src">all ×3</td><td class="mono">BOGO</td><td><span class="where native">Shopify discount</span></td><td><span class="pill warn">parity to check</span></td><td><button class="btn sm ghost" onclick="show('alerts')">Check</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="intro" style="margin-top:16px;color:var(--text-3);font-size:12px">Note: prices (data) have a single source of truth here and are published to the stores. Discount logic (Buy-To-Use, BOGO) runs in Shopify — the console only pushes the parameters, not the rule.</p>
+    </section>
+
+    <!-- KEYS -->
+    <section class="page" id="keys">
+      <p class="intro">Each connector's credentials. Values are masked and only shown on reveal, with the action recorded in the log. Rotation revokes the old key after a grace window.</p>
+      <div class="toolbar"><button class="btn sm ghost" onclick="toast('Add credential')">+ Credential</button></div>
+      <div class="tablewrap">
+        <table class="keytable">
+          <thead><tr><th>Name</th><th>Connector</th><th>Permissions</th><th>Key</th><th>Last used</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>Admin API token</b></td><td class="t-src">Shopify USA D2C</td><td><span class="scope-tag">read_orders</span><span class="scope-tag">write_discounts</span></td><td><span class="keyval" data-real="shpat_a91f7c4e2b8d3f9a">shpat_••••••••3f9a</span></td><td class="t-time">12s ago</td><td><span class="pill ok">active</span></td><td><button class="btn sm ghost" onclick="reveal(this)">Reveal</button></td></tr>
+            <tr><td><b>Admin API token</b></td><td class="t-src">Shopify USA B2B</td><td><span class="scope-tag">read_orders</span><span class="scope-tag">read_companies</span></td><td><span class="keyval" data-real="shpat_77b1d0e94c2a9de1">shpat_••••••••9de1</span></td><td class="t-time">1m ago</td><td><span class="pill ok">active</span></td><td><button class="btn sm ghost" onclick="reveal(this)">Reveal</button></td></tr>
+            <tr><td><b>OAuth client</b></td><td class="t-src">Business Central</td><td><span class="scope-tag">API.ReadWrite.All</span></td><td><span class="keyval" data-real="bc_cl_5e2db7f0a1c84b80">bc_cl_••••••••4b80</span></td><td class="t-time">22s ago</td><td><span class="pill ok">active</span></td><td><button class="btn sm ghost" onclick="reveal(this)">Reveal</button></td></tr>
+            <tr><td><b>API key</b></td><td class="t-src">ShipStation</td><td><span class="scope-tag">shipments</span><span class="scope-tag">tracking</span></td><td><span class="keyval" data-real="ss_live_d7e4118a02f6c11a">ss_live_••••••11a</span></td><td class="t-time">3m ago</td><td><span class="pill ok">active</span></td><td><button class="btn sm ghost" onclick="reveal(this)">Reveal</button></td></tr>
+            <tr><td><b>Webhook signing secret</b></td><td class="t-src">Shopify (all)</td><td><span class="scope-tag">hmac verify</span></td><td><span class="keyval" data-real="whsec_3aa957e0b1d2c8f4">whsec_••••••c8f4</span></td><td class="t-time">12s ago</td><td><span class="pill warn">expires in 9 days</span></td><td><button class="btn sm ghost" onclick="toast('Key rotated — old one revoked in 24h')">Rotate</button></td></tr>
+            <tr><td><b>SP-API credential</b></td><td class="t-src">Amazon FBA</td><td><span class="scope-tag">orders</span><span class="scope-tag">inventory</span></td><td><span class="keyval" data-real="amzn_sp_0b7ce90f4a13d77c">amzn_sp_••••d77c</span></td><td class="t-time">14m ago</td><td><span class="pill err">auth error</span></td><td><button class="btn sm ghost" onclick="toast('Re-authentication required')">Renew</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="intro" style="margin-top:16px;color:var(--text-3);font-size:12px">Credentials aren't entered in cleartext from the console — they're provided through the connector's secure flow. The values shown here are masked examples.</p>
+    </section>
+
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drTitle">
+  <div class="drawer-head">
+    <div><div class="drawer-title" id="drTitle">Shop sync settings</div><div class="drawer-sub" id="drSub"></div></div>
+    <button class="x" onclick="closeAll()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="drBody"></div>
+  <div class="drawer-foot"><button class="btn ghost" onclick="closeAll()">Cancel</button><button class="btn primary" onclick="saveShop()">Save settings</button></div>
+</aside>
+
+<div class="modal" id="ruleModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+  <div class="modal-head"><div class="modal-title" id="rmTitle">New pricing rule</div><div class="modal-sub">Prices and memberships are pushed as data. Tiers and codes run natively in Shopify.</div></div>
+  <div class="modal-body">
+    <div class="field"><label for="rName">Rule name</label><input type="text" id="rName" placeholder="e.g. List price — BBX7"></div>
+    <div class="field"><label for="rType">Type</label>
+      <select id="rType" onchange="ruleHint()">
+        <option value="base price">Base price</option>
+        <option value="MAP floor">MAP floor</option>
+        <option value="price list">Price list (B2B)</option>
+        <option value="conditional tier">Conditional tier</option>
+        <option value="code / automatic">Discount code</option>
+      </select>
+    </div>
+    <div class="field"><label>Target stores</label>
+      <div class="chk-group">
+        <label class="chk"><input type="checkbox" value="USA D2C" checked> USA D2C</label>
+        <label class="chk"><input type="checkbox" value="USA B2B"> USA B2B</label>
+        <label class="chk"><input type="checkbox" value="AU D2C"> AU D2C</label>
+      </div>
+    </div>
+    <div class="field"><label for="rValue">Value</label><input type="text" id="rValue" placeholder="e.g. $49.00 or 15%"></div>
+    <div class="where-hint" id="rHint">Runs as <b>push (data)</b> — a price or membership published to the stores.</div>
+  </div>
+  <div class="modal-foot"><button class="btn ghost" onclick="closeAll()">Cancel</button><button class="btn primary" onclick="saveRule()">Create rule</button></div>
+</div>
+
+<div id="toast"><span class="dot"></span><span id="toastMsg"></span></div>
+
+<script>
+const titles={
+  connectors:['Connectors','Connected systems and sync status'],
+  events:['Event log','Queue telemetry — source, status, attempts'],
+  alerts:['Alerts','Detected issues that need attention'],
+  pricing:['Pricing rules','Data pushed to the stores — not discount logic'],
+  keys:['API keys','Credentials per connector']
+};
+function show(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===page));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
+  document.getElementById('pgTitle').textContent=titles[page][0];
+  document.getElementById('pgSub').textContent=titles[page][1];
+  window.scrollTo({top:0,behavior:'instant'});
+}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>show(n.dataset.page)));
+document.querySelectorAll('.filters .pill-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filters .pill-btn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const f=b.dataset.f;
+  document.querySelectorAll('#evtTable tbody tr').forEach(tr=>{tr.style.display=(f==='all'||tr.dataset.s===f)?'':'none';});
+}));
+function reveal(btn){
+  const cell=btn.closest('tr').querySelector('.keyval');
+  if(btn.textContent==='Reveal'){cell.textContent=cell.dataset.real;btn.textContent='Hide';toast('Reveal recorded in the log');}
+  else{const r=cell.dataset.real;cell.textContent=r.slice(0,r.indexOf('_')+1)+'••••••'+r.slice(-4);btn.textContent='Reveal';}
+}
+function ack(id){const a=document.getElementById(id);a.classList.toggle('resolved');toast(a.classList.contains('resolved')?'Alert acknowledged':'Alert reopened');}
+let tt;
+function toast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ---------- per-shop sync settings ---------- */
+const shopConfig={
+  'usa-d2c':{title:'Shopify · USA D2C',sub:'Connected over webhook · choose what to sync',rows:[
+    {name:'Orders',dir:'Shopify → BC',mode:'realtime',lock:false,on:true},
+    {name:'Inventory levels',dir:'BC → Shopify',mode:'realtime',lock:false,on:true},
+    {name:'Refunds → credit memo',dir:'Shopify → BC',mode:'realtime',lock:false,on:true},
+    {name:'Prices (data)',dir:'Console → Shopify',mode:'scheduled',lock:false,on:true},
+    {name:'Product details',dir:'BC → Shopify',mode:'scheduled',lock:true,on:true},
+    {name:'Fulfillment & tracking',dir:'BC → Shopify',mode:'scheduled',lock:true,on:true},
+    {name:'Customers',dir:'Bidirectional',mode:'scheduled',lock:false,on:false}
+  ]},
+  'usa-b2b':{title:'Shopify · USA B2B',sub:'Connected over webhook · B2B catalog',rows:[
+    {name:'Orders',dir:'Shopify → BC',mode:'realtime',lock:false,on:true},
+    {name:'Inventory levels',dir:'BC → Shopify',mode:'realtime',lock:false,on:true},
+    {name:'Refunds → credit memo',dir:'Shopify → BC',mode:'realtime',lock:false,on:true},
+    {name:'Price lists (B2B)',dir:'Console → Shopify',mode:'scheduled',lock:false,on:true},
+    {name:'Product details',dir:'BC → Shopify',mode:'scheduled',lock:true,on:true},
+    {name:'Fulfillment & tracking',dir:'BC → Shopify',mode:'scheduled',lock:true,on:true},
+    {name:'Companies & customers',dir:'Bidirectional',mode:'scheduled',lock:false,on:true}
+  ]},
+  'au':{title:'Shopify · AU D2C',sub:'Currently manual — enable a flow to bring it on-system',rows:[
+    {name:'Orders',dir:'Shopify → BC',mode:'realtime',lock:false,on:false},
+    {name:'Inventory levels',dir:'BC → Shopify',mode:'scheduled',lock:false,on:false},
+    {name:'Refunds → credit memo',dir:'Shopify → BC',mode:'realtime',lock:false,on:false},
+    {name:'Prices (data)',dir:'Console → Shopify',mode:'scheduled',lock:false,on:false},
+    {name:'Product details',dir:'BC → Shopify',mode:'scheduled',lock:true,on:false},
+    {name:'Fulfillment & tracking',dir:'BC → Shopify',mode:'scheduled',lock:true,on:false},
+    {name:'Customers',dir:'Bidirectional',mode:'scheduled',lock:false,on:false}
+  ]}
+};
+function openShop(id){
+  const c=shopConfig[id];
+  document.getElementById('drTitle').textContent=c.title;
+  document.getElementById('drSub').textContent=c.sub;
+  let h='<p class="dr-hint">Toggle each data flow on or off, set its direction, and choose how often it syncs. Real-time uses events (webhooks); scheduled runs on the queue at a short interval.</p>';
+  h+='<div class="dr-grouplabel">Data flows</div>';
+  c.rows.forEach((r,i)=>{
+    const rt=r.mode==='realtime', sc=r.mode==='scheduled';
+    h+=`<div class="sync-row${r.on?'':' off'}" id="sr_${i}">
+      <label class="switch"><input type="checkbox" ${r.on?'checked':''} onchange="this.closest('.sync-row').classList.toggle('off',!this.checked)"><span class="track"></span></label>
+      <div class="sync-info"><div class="sync-name">${r.name}</div><div class="sync-dir">${r.dir}</div></div>
+      <div class="seg">
+        <button class="${rt?'on':''}" ${r.lock?'disabled':''} onclick="segSet(this,1)">Real-time</button>
+        <button class="${sc?'on':''}" ${r.lock?'disabled':''} onclick="segSet(this,0)">Scheduled</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('drBody').innerHTML=h;
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('drawer').classList.add('show');
+}
+function segSet(btn,rt){
+  if(btn.disabled)return;
+  const seg=btn.parentElement;
+  seg.querySelectorAll('button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function saveShop(){
+  const n=document.querySelectorAll('#drBody .sync-row:not(.off)').length;
+  closeAll();toast(n+' data flow'+(n===1?'':'s')+' enabled for this store');
+}
+
+/* ---------- add pricing rule ---------- */
+function openRule(){
+  document.getElementById('rName').value='';
+  document.getElementById('rValue').value='';
+  document.getElementById('rType').value='base price';
+  ruleHint();
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('ruleModal').classList.add('show');
+}
+function ruleHint(){
+  const t=document.getElementById('rType').value, h=document.getElementById('rHint');
+  if(t==='conditional tier'||t==='code / automatic'){
+    h.className='where-hint native';
+    h.innerHTML='Runs <b>natively in Shopify</b> — the console pushes only the parameters (metafields), not the rule logic.';
+  }else{
+    h.className='where-hint';
+    h.innerHTML='Runs as <b>push (data)</b> — a price or membership published to the stores.';
+  }
+}
+function saveRule(){
+  const name=document.getElementById('rName').value.trim()||'Untitled rule';
+  const type=document.getElementById('rType').value;
+  const value=document.getElementById('rValue').value.trim()||'—';
+  const targets=[...document.querySelectorAll('#ruleModal .chk input:checked')].map(c=>c.value);
+  const target=targets.length===3?'all ×3':(targets.join(', ')||'none');
+  const native=(type==='conditional tier'||type==='code / automatic');
+  const where=native?`<span class="where native">Shopify-native</span>`:`<span class="where push">push (data)</span>`;
+  const sync=native?`<span class="pill idle no-dot">managed in Shopify</span>`:`<span class="pill warn">not synced yet</span>`;
+  const act=native?`<button class="btn sm ghost" onclick="toast('Parameters pushed as metafields')">Config</button>`:`<button class="btn sm ghost" onclick="this.closest('tr').querySelector('.pill').className='pill ok';this.closest('tr').querySelector('.pill').textContent='synced · now';toast('Synced to Shopify')">Sync</button>`;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><b>${name}</b><div class="t-id" style="margin-top:2px">new rule</div></td><td class="t-src">${type}</td><td class="t-src">${target}</td><td class="mono">${value}</td><td>${where}</td><td>${sync}</td><td>${act}</td>`;
+  document.getElementById('priceBody').appendChild(tr);
+  closeAll();toast('Rule created — '+name);
+}
+
+/* ---------- overlay control ---------- */
+function closeAll(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('show');
+  document.getElementById('ruleModal').classList.remove('show');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll();});
+</script>
+</body>
+</html>
