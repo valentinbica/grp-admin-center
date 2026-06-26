@@ -217,6 +217,64 @@ tbody tr:hover{background:#FAFBFC}
 .where-hint{font-family:'IBM Plex Mono';font-size:11.5px;padding:9px 12px;border-radius:7px;background:var(--info-bg);color:var(--info);line-height:1.5}
 .where-hint.native{background:#EDEAF6;color:#6A52B8}
 
+/* role selector + RBAC */
+.role-sel{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-3);font-weight:500}
+.role-sel select{font-family:inherit;font-size:12.5px;font-weight:600;padding:5px 24px 5px 10px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--text);cursor:pointer}
+.role-sel select:focus{outline:2px solid var(--brass);outline-offset:0;border-color:transparent}
+.nav-item.hidden{display:none}
+.role-banner{display:flex;align-items:center;gap:9px;background:var(--brass-soft);border:1px solid #E7D8B5;color:var(--brass-d);font-size:12.5px;border-radius:9px;padding:9px 13px;margin-bottom:18px}
+.role-banner svg{width:15px;height:15px;flex-shrink:0;stroke-width:1.9}
+.role-banner b{font-weight:600}
+
+/* toolbar selects */
+.fsel{font-family:'IBM Plex Mono';font-size:12px;padding:6px 24px 6px 10px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--text-2);cursor:pointer}
+.fsel:focus{outline:2px solid var(--brass);outline-offset:0;border-color:transparent}
+
+/* clickable event rows */
+#evtTable tbody tr{cursor:pointer}
+#evtTable tbody tr td:last-child{color:var(--text-3)}
+
+/* event detail drawer */
+.ed-meta{display:grid;grid-template-columns:1fr 1fr;gap:11px 18px;margin:4px 0 6px}
+.ed-kv .k{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);font-weight:600}
+.ed-kv .v{font-family:'IBM Plex Mono';font-size:12.5px;color:var(--text);margin-top:3px}
+.ed-code{background:#1C1F26;color:#D7DBE2;font-family:'IBM Plex Mono';font-size:11.5px;line-height:1.6;padding:13px 14px;border-radius:9px;overflow:auto;white-space:pre;margin-top:6px}
+.ed-code .ck{color:#8FB6E0}.ed-code .cs{color:#9CCB8F}.ed-code .cn{color:#E0B36B}
+.timeline{margin:8px 0 2px;border-left:2px solid var(--line);padding-left:18px}
+.tl{position:relative;padding:7px 0}
+.tl::before{content:"";position:absolute;left:-25px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--line-strong);border:2px solid var(--canvas)}
+.tl.ok::before{background:var(--ok)}.tl.warn::before{background:var(--warn)}.tl.err::before{background:var(--err)}
+.tl-t{font-family:'IBM Plex Mono';font-size:11px;color:var(--text-3)}
+.tl-m{font-size:12.5px;color:var(--text);margin-top:1px}
+.err-box{background:var(--err-bg);border:1px solid #E9C3BF;color:#8E2A22;font-family:'IBM Plex Mono';font-size:11.5px;padding:10px 12px;border-radius:8px;margin-top:6px;line-height:1.5}
+
+/* orders page */
+.ostores{display:flex;gap:16px;margin-bottom:18px}
+.ostore{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow)}
+.ostore .ohead{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.ostore .ologo{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;color:#fff;font-family:'IBM Plex Mono';font-weight:700;font-size:12px;background:#5E8E3E}
+.ostore .onm{font-weight:600;font-size:13.5px}
+.ostore .osub{font-size:11px;color:var(--text-3);font-family:'IBM Plex Mono'}
+.ostore .orow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:5px 0;border-top:1px solid var(--line)}
+.ostore .orow .k{color:var(--text-3)}
+.ostore .orow .v{font-family:'IBM Plex Mono';font-size:12.5px;font-weight:600}
+.ostore .v.ok{color:var(--ok)}.ostore .v.warn{color:var(--warn)}.ostore .v.err{color:var(--err)}
+
+.pipeline{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);margin-bottom:8px}
+.pstage{flex:1;padding:14px 18px;border-right:1px solid var(--line);position:relative}
+.pstage:last-child{border-right:none}
+.pstage .pn{font-family:'IBM Plex Mono';font-size:23px;font-weight:600;letter-spacing:-.5px}
+.pstage .pl{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.pstage .pc{font-size:10.5px;color:var(--text-3);font-family:'IBM Plex Mono';margin-top:4px}
+.pstage .chev{position:absolute;right:-7px;top:50%;transform:translateY(-50%);z-index:2;color:var(--text-3);background:var(--surface);font-size:13px}
+.pstage.attn{background:#FFFBF2}
+.pstage.attn .pn{color:var(--warn)}
+
+.dots{display:inline-flex;gap:4px;align-items:center;vertical-align:middle}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line-strong);display:inline-block}
+.dots i.on{background:var(--ok)}.dots i.warn{background:var(--warn)}.dots i.err{background:var(--err)}
+.stage-lbl{font-size:11px;color:var(--text-2);margin-left:8px;font-family:'IBM Plex Mono'}
+
 @media(max-width:860px){
   .sidebar{width:64px}.brand-name,.brand-sub,.nav-label,.nav-item span:not(.badge),.sb-foot .who span,.sb-health span{display:none}
   .nav-item{justify-content:center;padding:11px 0}.brand{justify-content:center;padding:18px 0}
@@ -236,6 +294,10 @@ tbody tr:hover{background:#FAFBFC}
     <button class="nav-item active" data-page="connectors">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 7h18M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"/></svg>
       <span>Connectors</span>
+    </button>
+    <button class="nav-item" data-page="orders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+      <span>Orders</span>
     </button>
     <button class="nav-item" data-page="events">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
@@ -265,11 +327,14 @@ tbody tr:hover{background:#FAFBFC}
   <header class="topbar">
     <div><div class="page-title" id="pgTitle">Connectors</div><div class="page-sub" id="pgSub">Connected systems and sync status</div></div>
     <div class="spacer"></div>
+    <div class="role-sel">Viewing as <select id="roleSel" onchange="applyRole(this.value)"><option value="admin">Admin</option><option value="ops">Ops</option><option value="pricing">Pricing</option></select></div>
     <div class="global-dot"><i></i> Queue: 6 in flight</div>
     <span class="env">PRODUCTION</span>
   </header>
 
   <div class="content">
+
+    <div class="role-banner" id="roleBanner" style="display:none"></div>
 
     <!-- CONNECTORS -->
     <section class="page active" id="connectors">
@@ -337,6 +402,73 @@ tbody tr:hover{background:#FAFBFC}
       </div>
     </section>
 
+    <!-- ORDERS -->
+    <section class="page" id="orders">
+      <p class="intro">Where every order is in the pipeline, and whether it reached Business Central — broken down by store. Click a row to see its full sync timeline.</p>
+
+      <h2 class="sec">By store (today)</h2>
+      <div class="ostores">
+        <div class="ostore">
+          <div class="ohead"><div class="ologo">US</div><div><div class="onm">Shopify · USA D2C</div><div class="osub">webhook · real-time</div></div></div>
+          <div class="orow"><span class="k">Orders today</span><span class="v">86</span></div>
+          <div class="orow"><span class="k">Synced to BC</span><span class="v ok">98%</span></div>
+          <div class="orow"><span class="k">Pending / failed</span><span class="v warn">1 · 0</span></div>
+        </div>
+        <div class="ostore">
+          <div class="ohead"><div class="ologo" style="background:#5E8E3E">B2</div><div><div class="onm">Shopify · USA B2B</div><div class="osub">webhook · real-time</div></div></div>
+          <div class="orow"><span class="k">Orders today</span><span class="v">39</span></div>
+          <div class="orow"><span class="k">Synced to BC</span><span class="v ok">95%</span></div>
+          <div class="orow"><span class="k">Pending / failed</span><span class="v err">1 · 1</span></div>
+        </div>
+        <div class="ostore">
+          <div class="ohead"><div class="ologo" style="background:#C5810C">AU</div><div><div class="onm">Shopify · AU D2C</div><div class="osub">manual · off-system</div></div></div>
+          <div class="orow"><span class="k">Orders today</span><span class="v">12</span></div>
+          <div class="orow"><span class="k">Synced to BC</span><span class="v">manual</span></div>
+          <div class="orow"><span class="k">Pending / failed</span><span class="v">— entered by hand</span></div>
+        </div>
+      </div>
+
+      <h2 class="sec">Pipeline (all stores)</h2>
+      <div class="pipeline">
+        <div class="pstage"><div class="pn">137</div><div class="pl">Received</div><div class="pc">from stores</div><span class="chev">›</span></div>
+        <div class="pstage attn"><div class="pn">6</div><div class="pl">In queue</div><div class="pc">awaiting BC</div><span class="chev">›</span></div>
+        <div class="pstage"><div class="pn">119</div><div class="pl">Created in BC</div><div class="pc">sales orders</div><span class="chev">›</span></div>
+        <div class="pstage"><div class="pn">112</div><div class="pl">Fulfilled</div><div class="pc">shipped + tracked</div><span class="chev">›</span></div>
+        <div class="pstage"><div class="pn">104</div><div class="pl">Invoiced</div><div class="pc">posted + sent</div></div>
+      </div>
+      <p class="intro" style="font-size:12px;color:var(--text-3);margin-bottom:18px">6 orders are in the queue waiting to reach BC · 1 order failed and is in the dead-letter queue (needs attention).</p>
+
+      <h2 class="sec">Orders</h2>
+      <div class="toolbar">
+        <div class="filters">
+          <button class="pill-btn on" data-of="all">All</button>
+          <button class="pill-btn" data-of="ok">Synced</button>
+          <button class="pill-btn" data-of="pending">Pending</button>
+          <button class="pill-btn" data-of="failed">Failed</button>
+        </div>
+        <select class="fsel" id="oStore" onchange="applyOrderFilters()">
+          <option value="all">All stores</option>
+          <option value="USA D2C">Shopify USA D2C</option>
+          <option value="USA B2B">Shopify USA B2B</option>
+          <option value="AU D2C">Shopify AU D2C</option>
+        </select>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="oSearch" oninput="applyOrderFilters()" placeholder="search order #, customer…"></div>
+      </div>
+      <div class="tablewrap">
+        <table id="ordTable">
+          <thead><tr><th>Order</th><th>Store</th><th>Placed</th><th>Pipeline stage</th><th>BC sync</th><th>Value</th><th></th></tr></thead>
+          <tbody>
+            <tr data-of="ok" data-store="USA D2C" onclick="openOrder('11842')"><td><b>#11842</b><div class="t-id" style="margin-top:2px">C00160</div></td><td class="t-src">USA D2C</td><td class="t-time">12:48</td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="stage-lbl">invoiced</span></td><td><span class="pill ok">synced</span></td><td class="mono">$248.00</td><td class="t-id">›</td></tr>
+            <tr data-of="pending" data-store="USA B2B" onclick="openOrder('11844')"><td><b>#11844</b><div class="t-id" style="margin-top:2px">Mac Tools</div></td><td class="t-src">USA B2B</td><td class="t-time">12:47</td><td><span class="dots"><i class="on"></i><i class="warn"></i><i></i><i></i><i></i></span><span class="stage-lbl">in queue (2/5)</span></td><td><span class="pill warn">pending</span></td><td class="mono">$1,920.00</td><td class="t-id">›</td></tr>
+            <tr data-of="ok" data-store="USA D2C" onclick="openOrder('11840')"><td><b>#11840</b><div class="t-id" style="margin-top:2px">C00160</div></td><td class="t-src">USA D2C</td><td class="t-time">12:44</td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><span class="stage-lbl">fulfilled</span></td><td><span class="pill ok">synced</span></td><td class="mono">$96.00</td><td class="t-id">›</td></tr>
+            <tr data-of="failed" data-store="USA B2B" onclick="openOrder('11845')"><td><b>#11845</b><div class="t-id" style="margin-top:2px">Matco</div></td><td class="t-src">USA B2B</td><td class="t-time">12:42</td><td><span class="dots"><i class="on"></i><i class="err"></i><i></i><i></i><i></i></span><span class="stage-lbl">failed at BC</span></td><td><span class="pill err">dead-letter</span></td><td class="mono">$540.00</td><td class="t-id">›</td></tr>
+            <tr data-of="ok" data-store="USA D2C" onclick="openOrder('11838')"><td><b>#11838</b><div class="t-id" style="margin-top:2px">C00160</div></td><td class="t-src">USA D2C</td><td class="t-time">12:39</td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="stage-lbl">created in BC</span></td><td><span class="pill ok">synced</span></td><td class="mono">$312.00</td><td class="t-id">›</td></tr>
+            <tr data-of="pending" data-store="AU D2C" onclick="openOrder('AU2207')"><td><b>#AU-2207</b><div class="t-id" style="margin-top:2px">distributor</div></td><td class="t-src">AU D2C</td><td class="t-time">11:20</td><td><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></span><span class="stage-lbl">manual entry</span></td><td><span class="pill idle no-dot">manual</span></td><td class="mono">$130.00</td><td class="t-id">›</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- EVENTS -->
     <section class="page" id="events">
       <p class="intro">Every queue message leaves a trace here — source, type, status, duration, and attempt count. Messages that fail too many times move to the dead-letter queue and raise an alert.</p>
@@ -354,23 +486,46 @@ tbody tr:hover{background:#FAFBFC}
           <button class="pill-btn" data-f="retry">Retrying</button>
           <button class="pill-btn" data-f="failed">Failed</button>
         </div>
-        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input placeholder="search SKU, order id, idempotency key…"></div>
+        <select class="fsel" id="fStore" onchange="applyEvtFilters()">
+          <option value="all">All sources</option>
+          <option value="usa-d2c">Shopify USA D2C</option>
+          <option value="usa-b2b">Shopify USA B2B</option>
+          <option value="au">Shopify AU</option>
+          <option value="bc">Business Central</option>
+          <option value="wms">WMS / ShipStation</option>
+        </select>
+        <select class="fsel" id="fType" onchange="applyEvtFilters()">
+          <option value="all">All types</option>
+          <option value="order.created">order.created</option>
+          <option value="order.cancelled">order.cancelled</option>
+          <option value="inventory.push">inventory.push</option>
+          <option value="fulfillment.posted">fulfillment.posted</option>
+          <option value="pricing.push">pricing.push</option>
+          <option value="refund.sync">refund.sync</option>
+        </select>
+        <select class="fsel" id="fTime" onchange="applyEvtFilters()">
+          <option value="999">Any time</option>
+          <option value="1">Last 1 min</option>
+          <option value="2">Last 2 min</option>
+          <option value="3">Last 3 min</option>
+        </select>
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg><input id="fSearch" oninput="applyEvtFilters()" placeholder="search SKU, order id, idempotency key…"></div>
         <button class="btn sm ghost" onclick="toast('Export started')">Export</button>
       </div>
       <div class="tablewrap">
         <table id="evtTable">
           <thead><tr><th>Time</th><th>Event</th><th>Flow</th><th>Status</th><th>Attempts</th><th>Duration</th><th>Idempotency key</th></tr></thead>
           <tbody>
-            <tr data-s="success"><td class="t-time">12:48:31</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.84s</td><td class="t-id">evt_9f3a…c21</td></tr>
-            <tr data-s="success"><td class="t-time">12:48:09</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.12s</td><td class="t-id">evt_77b1…9de</td></tr>
-            <tr data-s="success"><td class="t-time">12:47:55</td><td><span class="evt-type">fulfillment.posted</span></td><td class="t-src">WMS/ShipStation <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.66s</td><td class="t-id">evt_1c08…4a2</td></tr>
-            <tr data-s="retry"><td class="t-time">12:47:40</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA B2B <span class="arrow">→</span> BC</td><td><span class="pill warn">retrying</span></td><td class="mono">2/5</td><td class="t-dur">—</td><td class="t-id">evt_5e2d…b80</td></tr>
-            <tr data-s="success"><td class="t-time">12:47:12</td><td><span class="evt-type">pricing.push</span></td><td class="t-src">Console <span class="arrow">→</span> Shopify USA D2C</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.39s</td><td class="t-id">evt_a410…7f1</td></tr>
-            <tr data-s="success"><td class="t-time">12:46:58</td><td><span class="evt-type">order.cancelled</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.51s</td><td class="t-id">evt_b922…3cc</td></tr>
-            <tr data-s="failed"><td class="t-time">12:46:30</td><td><span class="evt-type">refund.sync</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill err">dead-letter</span></td><td class="mono">5/5</td><td class="t-dur">timeout</td><td class="t-id">evt_d7e4…11a</td></tr>
-            <tr data-s="success"><td class="t-time">12:46:02</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.04s</td><td class="t-id">evt_3aa9…57e</td></tr>
-            <tr data-s="success"><td class="t-time">12:45:44</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.79s</td><td class="t-id">evt_6f01…d33</td></tr>
-            <tr data-s="retry"><td class="t-time">12:45:20</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify AU</td><td><span class="pill warn">retrying</span></td><td class="mono">3/5</td><td class="t-dur">—</td><td class="t-id">evt_0b7c…e90</td></tr>
+            <tr data-s="success" data-store="usa-d2c" data-type="order.created" data-min="0" onclick="openEvent('ev1')"><td class="t-time">12:48:31</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.84s</td><td class="t-id">evt_9f3a…c21 ›</td></tr>
+            <tr data-s="success" data-store="bc" data-type="inventory.push" data-min="0" onclick="openEvent('ev2')"><td class="t-time">12:48:09</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.12s</td><td class="t-id">evt_77b1…9de ›</td></tr>
+            <tr data-s="success" data-store="wms" data-type="fulfillment.posted" data-min="1" onclick="openEvent('ev3')"><td class="t-time">12:47:55</td><td><span class="evt-type">fulfillment.posted</span></td><td class="t-src">WMS/ShipStation <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.66s</td><td class="t-id">evt_1c08…4a2 ›</td></tr>
+            <tr data-s="retry" data-store="usa-b2b" data-type="order.created" data-min="1" onclick="openEvent('ev4')"><td class="t-time">12:47:40</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA B2B <span class="arrow">→</span> BC</td><td><span class="pill warn">retrying</span></td><td class="mono">2/5</td><td class="t-dur">—</td><td class="t-id">evt_5e2d…b80 ›</td></tr>
+            <tr data-s="success" data-store="usa-d2c" data-type="pricing.push" data-min="1" onclick="openEvent('ev5')"><td class="t-time">12:47:12</td><td><span class="evt-type">pricing.push</span></td><td class="t-src">Console <span class="arrow">→</span> Shopify USA D2C</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.39s</td><td class="t-id">evt_a410…7f1 ›</td></tr>
+            <tr data-s="success" data-store="usa-d2c" data-type="order.cancelled" data-min="2" onclick="openEvent('ev6')"><td class="t-time">12:46:58</td><td><span class="evt-type">order.cancelled</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.51s</td><td class="t-id">evt_b922…3cc ›</td></tr>
+            <tr data-s="failed" data-store="usa-d2c" data-type="refund.sync" data-min="2" onclick="openEvent('ev7')"><td class="t-time">12:46:30</td><td><span class="evt-type">refund.sync</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill err">dead-letter</span></td><td class="mono">5/5</td><td class="t-dur">timeout</td><td class="t-id">evt_d7e4…11a ›</td></tr>
+            <tr data-s="success" data-store="bc" data-type="inventory.push" data-min="2" onclick="openEvent('ev8')"><td class="t-time">12:46:02</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify ×3</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">1.04s</td><td class="t-id">evt_3aa9…57e ›</td></tr>
+            <tr data-s="success" data-store="usa-d2c" data-type="order.created" data-min="3" onclick="openEvent('ev9')"><td class="t-time">12:45:44</td><td><span class="evt-type">order.created</span></td><td class="t-src">Shopify USA D2C <span class="arrow">→</span> BC</td><td><span class="pill ok">success</span></td><td class="mono">1/5</td><td class="t-dur">0.79s</td><td class="t-id">evt_6f01…d33 ›</td></tr>
+            <tr data-s="retry" data-store="au" data-type="inventory.push" data-min="3" onclick="openEvent('ev10')"><td class="t-time">12:45:20</td><td><span class="evt-type">inventory.push</span></td><td class="t-src">BC <span class="arrow">→</span> Shopify AU</td><td><span class="pill warn">retrying</span></td><td class="mono">3/5</td><td class="t-dur">—</td><td class="t-id">evt_0b7c…e90 ›</td></tr>
           </tbody>
         </table>
       </div>
@@ -504,6 +659,15 @@ tbody tr:hover{background:#FAFBFC}
   <div class="drawer-foot"><button class="btn ghost" onclick="closeAll()">Cancel</button><button class="btn primary" onclick="saveShop()">Save settings</button></div>
 </aside>
 
+<aside class="drawer" id="evtDrawer" role="dialog" aria-modal="true" aria-labelledby="edTitle">
+  <div class="drawer-head">
+    <div><div class="drawer-title" id="edTitle">Event detail</div><div class="drawer-sub" id="edSub"></div></div>
+    <button class="x" onclick="closeAll()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body" id="edBody"></div>
+  <div class="drawer-foot" id="edFoot"></div>
+</aside>
+
 <div class="modal" id="ruleModal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
   <div class="modal-head"><div class="modal-title" id="rmTitle">New pricing rule</div><div class="modal-sub">Prices and memberships are pushed as data. Tiers and codes run natively in Shopify.</div></div>
   <div class="modal-body">
@@ -535,6 +699,7 @@ tbody tr:hover{background:#FAFBFC}
 <script>
 const titles={
   connectors:['Connectors','Connected systems and sync status'],
+  orders:['Orders','Pipeline status and BC sync, by store'],
   events:['Event log','Queue telemetry — source, status, attempts'],
   alerts:['Alerts','Detected issues that need attention'],
   pricing:['Pricing rules','Data pushed to the stores — not discount logic'],
@@ -548,12 +713,80 @@ function show(page){
   window.scrollTo({top:0,behavior:'instant'});
 }
 document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>show(n.dataset.page)));
-document.querySelectorAll('.filters .pill-btn').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.filters .pill-btn').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('#events .filters .pill-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#events .filters .pill-btn').forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
-  const f=b.dataset.f;
-  document.querySelectorAll('#evtTable tbody tr').forEach(tr=>{tr.style.display=(f==='all'||tr.dataset.s===f)?'':'none';});
+  applyEvtFilters();
 }));
+function applyEvtFilters(){
+  const st=document.querySelector('#events .filters .pill-btn.on').dataset.f;
+  const store=document.getElementById('fStore').value;
+  const typ=document.getElementById('fType').value;
+  const maxMin=parseInt(document.getElementById('fTime').value,10);
+  const q=(document.getElementById('fSearch').value||'').toLowerCase().trim();
+  document.querySelectorAll('#evtTable tbody tr').forEach(tr=>{
+    const ok = (st==='all'||tr.dataset.s===st)
+      && (store==='all'||tr.dataset.store===store)
+      && (typ==='all'||tr.dataset.type===typ)
+      && (parseInt(tr.dataset.min,10)<=maxMin)
+      && (q===''||tr.textContent.toLowerCase().includes(q));
+    tr.style.display=ok?'':'none';
+  });
+}
+
+/* ---------- orders ---------- */
+document.querySelectorAll('#orders .filters .pill-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#orders .filters .pill-btn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');applyOrderFilters();
+}));
+function applyOrderFilters(){
+  const st=document.querySelector('#orders .filters .pill-btn.on').dataset.of;
+  const store=document.getElementById('oStore').value;
+  const q=(document.getElementById('oSearch').value||'').toLowerCase().trim();
+  document.querySelectorAll('#ordTable tbody tr').forEach(tr=>{
+    const ok=(st==='all'||tr.dataset.of===st)&&(store==='all'||tr.dataset.store===store)&&(q===''||tr.textContent.toLowerCase().includes(q));
+    tr.style.display=ok?'':'none';
+  });
+}
+const orderData={
+ '11842':{no:'#11842',store:'USA D2C',cust:'C00160 (D2C)',placed:'12:48',value:'$248.00',bc:'101842',status:'ok',
+   tl:[['ok','12:48:31','Order placed in Shopify'],['ok','12:48:31','Queued (event)'],['ok','12:48:32','Sales order created in BC · 101842'],['ok','12:51:10','Shipped — tracking pushed'],['ok','13:04:00','Invoice posted + emailed']]},
+ '11844':{no:'#11844',store:'USA B2B',cust:'Mac Tools (B2B)',placed:'12:47',value:'$1,920.00',bc:'—',status:'warn',
+   tl:[['ok','12:47:40','Order placed in Shopify'],['ok','12:47:40','Queued (event)'],['warn','12:47:41','BC API timeout — retrying (2/5)'],['warn','—','Waiting to create sales order in BC']]},
+ '11840':{no:'#11840',store:'USA D2C',cust:'C00160 (D2C)',placed:'12:44',value:'$96.00',bc:'101840',status:'ok',
+   tl:[['ok','12:44:02','Order placed in Shopify'],['ok','12:44:03','Sales order created in BC · 101840'],['ok','12:58:00','Shipped — tracking pushed'],['warn','—','Invoice not posted yet']]},
+ '11845':{no:'#11845',store:'USA B2B',cust:'Matco (B2B)',placed:'12:42',value:'$540.00',bc:'—',status:'err',
+   err:'Sales order creation failed after 5 attempts (BC 504). Order is in the dead-letter queue — not yet in BC.',
+   tl:[['ok','12:42:10','Order placed in Shopify'],['ok','12:42:10','Queued (event)'],['err','12:42:30','5 attempts failed — moved to dead-letter']]},
+ '11838':{no:'#11838',store:'USA D2C',cust:'C00160 (D2C)',placed:'12:39',value:'$312.00',bc:'101838',status:'ok',
+   tl:[['ok','12:39:00','Order placed in Shopify'],['ok','12:39:01','Sales order created in BC · 101838'],['warn','—','Awaiting fulfillment from WMS']]},
+ 'AU2207':{no:'#AU-2207',store:'AU D2C',cust:'distributor',placed:'11:20',value:'$130.00',bc:'manual',status:'idle',
+   tl:[['ok','11:20','Order placed in Shopify AU'],['warn','—','AU is off-system — must be entered into BC by hand']]}
+};
+function openOrder(id){
+  const o=orderData[id]; if(!o) return;
+  const sev={ok:'ok',warn:'warn',err:'err',idle:'idle'}[o.status];
+  const bcLabel={ok:'synced',warn:'pending',err:'dead-letter',idle:'manual'}[o.status];
+  document.getElementById('edTitle').innerHTML=`Order ${o.no}`;
+  document.getElementById('edSub').textContent=`${o.store} · ${o.cust}`;
+  let h=`<div class="ed-meta">
+    <div class="ed-kv"><div class="k">BC sync</div><div class="v"><span class="pill ${sev} ${o.status==='idle'?'no-dot':''}">${bcLabel}</span></div></div>
+    <div class="ed-kv"><div class="k">BC sales order</div><div class="v">${o.bc}</div></div>
+    <div class="ed-kv"><div class="k">Placed</div><div class="v">${o.placed}</div></div>
+    <div class="ed-kv"><div class="k">Value</div><div class="v">${o.value}</div></div>
+  </div>`;
+  if(o.err) h+=`<div class="dr-grouplabel">Problem</div><div class="err-box">${o.err}</div>`;
+  h+=`<div class="dr-grouplabel">Sync timeline</div><div class="timeline">`;
+  o.tl.forEach(t=>{h+=`<div class="tl ${t[0]}"><div class="tl-t">${t[1]}</div><div class="tl-m">${t[2]}</div></div>`;});
+  h+=`</div>`;
+  document.getElementById('edBody').innerHTML=h;
+  let f=`<button class="btn ghost" onclick="closeAll()">Close</button><button class="btn" onclick="closeAll();show('events')">View events</button>`;
+  if(o.status==='err') f+=`<button class="btn primary" onclick="closeAll();toast('Re-queued — replaying order to BC')">Replay → BC</button>`;
+  else if(o.status==='warn') f+=`<button class="btn primary" onclick="closeAll();toast('Retry triggered')">Retry now</button>`;
+  document.getElementById('edFoot').innerHTML=f;
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('evtDrawer').classList.add('show');
+}
 function reveal(btn){
   const cell=btn.closest('tr').querySelector('.keyval');
   if(btn.textContent==='Reveal'){cell.textContent=cell.dataset.real;btn.textContent='Hide';toast('Reveal recorded in the log');}
@@ -664,9 +897,109 @@ function saveRule(){
 function closeAll(){
   document.getElementById('overlay').classList.remove('show');
   document.getElementById('drawer').classList.remove('show');
+  document.getElementById('evtDrawer').classList.remove('show');
   document.getElementById('ruleModal').classList.remove('show');
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll();});
+
+/* ---------- event detail drawer ---------- */
+const eventData={
+ ev1:{type:'order.created',flow:'Shopify USA D2C → BC',status:'success',id:'evt_9f3a8b21c4d0…c21',ext:'shopify-#11842',dur:'0.84s',
+   payload:{order:'#11842',customer:'C00160',lines:2,total:'$248.00',channel:'D2C'},
+   tl:[['ok','12:48:31','Received webhook orders/create'],['ok','12:48:31','Idempotency check — new'],['ok','12:48:32','Sales order created in BC (101842)']]},
+ ev4:{type:'order.created',flow:'Shopify USA B2B → BC',status:'retry',id:'evt_5e2d…b80',ext:'shopify-#11844',dur:'—',attempt:'2 / 5',
+   payload:{order:'#11844',customer:'Mac Tools',lines:6,total:'$1,920.00',channel:'B2B'},
+   tl:[['ok','12:47:40','Received webhook'],['warn','12:47:41','BC API timeout — scheduling retry (2/5)'],['warn','12:47:55','Next attempt in ~30s (backoff)']]},
+ ev7:{type:'refund.sync',flow:'Shopify USA D2C → BC',status:'failed',id:'evt_d7e4118a…11a',ext:'shopify-refund-#10428',dur:'timeout',attempt:'5 / 5',
+   payload:{refund:'#10428-R',order:'#10428',amount:'$64.00',reason:'damaged'},
+   err:'BCClientError: 504 Gateway Timeout posting credit memo to companies(…)/salesCreditMemos after 5 attempts. Moved to dead-letter.',
+   tl:[['ok','12:46:25','Received refund webhook'],['err','12:46:27','Attempt 1 — 504 timeout'],['err','12:46:32','Attempt 2–4 — 504 timeout (backoff)'],['err','12:46:30','Attempt 5 — 504 timeout → dead-letter']]},
+ ev10:{type:'inventory.push',flow:'BC → Shopify AU',status:'retry',id:'evt_0b7c…e90',ext:'sku-BBX14S',dur:'—',attempt:'3 / 5',
+   payload:{sku:'BBX14S',qty:42,store:'AU D2C',note:'manual connector'},
+   tl:[['ok','12:45:20','Change-feed event: stock changed'],['warn','12:45:22','AU store not connected — retrying (3/5)']]}
+};
+function fmtPayload(p){
+  return Object.entries(p).map(([k,v])=>{
+    const val=typeof v==='number'?`<span class="cn">${v}</span>`:`<span class="cs">"${v}"</span>`;
+    return `  <span class="ck">"${k}"</span>: ${val}`;
+  }).join(',\n');
+}
+function openEvent(id){
+  const e=eventData[id] || defaultEvent(id);
+  const sevClass={success:'ok',retry:'warn',failed:'err'}[e.status];
+  const sevLabel={success:'success',retry:'retrying',failed:'dead-letter'}[e.status];
+  document.getElementById('edTitle').innerHTML=`<span class="evt-type">${e.type}</span>`;
+  document.getElementById('edSub').textContent=e.flow;
+  let h=`<div class="ed-meta">
+    <div class="ed-kv"><div class="k">Status</div><div class="v"><span class="pill ${sevClass}">${sevLabel}</span></div></div>
+    <div class="ed-kv"><div class="k">Attempts</div><div class="v">${e.attempt||'1 / 5'}</div></div>
+    <div class="ed-kv"><div class="k">Idempotency key</div><div class="v">${e.id}</div></div>
+    <div class="ed-kv"><div class="k">External ref</div><div class="v">${e.ext}</div></div>
+    <div class="ed-kv"><div class="k">Duration</div><div class="v">${e.dur}</div></div>
+  </div>`;
+  if(e.err) h+=`<div class="dr-grouplabel">Error</div><div class="err-box">${e.err}</div>`;
+  h+=`<div class="dr-grouplabel">Payload</div><div class="ed-code">{\n${fmtPayload(e.payload)}\n}</div>`;
+  h+=`<div class="dr-grouplabel">Attempt history</div><div class="timeline">`;
+  e.tl.forEach(t=>{h+=`<div class="tl ${t[0]}"><div class="tl-t">${t[1]}</div><div class="tl-m">${t[2]}</div></div>`;});
+  h+=`</div>`;
+  document.getElementById('edBody').innerHTML=h;
+  // footer actions depend on status
+  let f='';
+  if(e.status==='failed'){
+    f=`<button class="btn ghost" onclick="discardEvent('${id}')">Discard</button>
+       <button class="btn" onclick="closeAll();show('events')">Inspect raw</button>
+       <button class="btn primary" onclick="retryEvent('${id}')">Replay → BC</button>`;
+  }else if(e.status==='retry'){
+    f=`<button class="btn ghost" onclick="discardEvent('${id}')">Cancel retries</button>
+       <button class="btn primary" onclick="retryEvent('${id}')">Retry now</button>`;
+  }else{
+    f=`<button class="btn ghost" onclick="closeAll()">Close</button>
+       <button class="btn" onclick="retryEvent('${id}')">Replay</button>`;
+  }
+  document.getElementById('edFoot').innerHTML=f;
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('evtDrawer').classList.add('show');
+}
+function defaultEvent(id){
+  // build a minimal detail from the clicked row
+  const tr=[...document.querySelectorAll('#evtTable tbody tr')].find(r=>r.getAttribute('onclick')?.includes(`'${id}'`));
+  const type=tr?.querySelector('.evt-type')?.textContent||'event';
+  const flow=tr?.querySelector('.t-src')?.textContent.replace(/\s+/g,' ').trim()||'';
+  const st=tr?.dataset.s||'success';
+  return {type,flow,status:st,id:tr?.querySelector('.t-id')?.textContent.replace(' ›','')||'evt_…',ext:'—',dur:tr?.querySelector('.t-dur')?.textContent||'—',
+    payload:{note:'no extended payload captured for this demo row'},
+    tl:[['ok',tr?.querySelector('.t-time')?.textContent||'','Processed']]};
+}
+function rowFor(id){return [...document.querySelectorAll('#evtTable tbody tr')].find(r=>r.getAttribute('onclick')?.includes(`'${id}'`));}
+function retryEvent(id){
+  const tr=rowFor(id); if(tr){const pill=tr.querySelector('.pill');pill.className='pill warn';pill.textContent='retrying';tr.dataset.s='retry';
+    setTimeout(()=>{pill.className='pill ok';pill.textContent='success';tr.dataset.s='success';},1400);}
+  closeAll();toast('Re-queued — replaying to Business Central');
+}
+function discardEvent(id){
+  const tr=rowFor(id); if(tr){const pill=tr.querySelector('.pill');pill.className='pill idle no-dot';pill.textContent='discarded';tr.dataset.s='discarded';}
+  closeAll();toast('Message discarded from queue');
+}
+
+/* ---------- RBAC ---------- */
+const roles={
+  admin:{label:'Admin',pages:['connectors','orders','events','alerts','pricing','keys'],note:'Full access to all modules, including connectors and API keys. Cost & margin stay in Business Central — never shown here.'},
+  ops:{label:'Ops',pages:['connectors','orders','events','alerts'],note:'Operations role: monitor connectors, orders, the event log and alerts. Pricing rules and API keys are hidden.'},
+  pricing:{label:'Pricing',pages:['pricing','alerts'],note:'Pricing role: manage pricing rules and see related alerts. Connectors, orders, event log and API keys are hidden.'}
+};
+function applyRole(r){
+  const role=roles[r];
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('hidden', !role.pages.includes(n.dataset.page));
+  });
+  const banner=document.getElementById('roleBanner');
+  if(r==='admin'){banner.style.display='none';}
+  else{banner.style.display='';banner.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5z"/></svg><span>Viewing as <b>${role.label}</b> — ${role.note}</span>`;}
+  // if current page not allowed, jump to first allowed
+  const cur=document.querySelector('.nav-item.active')?.dataset.page;
+  if(!role.pages.includes(cur)) show(role.pages[0]);
+}
+
 </script>
 </body>
 </html>
